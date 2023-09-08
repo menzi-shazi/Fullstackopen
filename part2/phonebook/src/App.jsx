@@ -1,4 +1,5 @@
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
+import axios from 'axios'
 
 const PersonName = ({ persons }) => {
   return (
@@ -33,6 +34,21 @@ const Form = ({ submitName, addName, addNumber, newName, newNumber }) => {
 }
 
 const App = () => {
+  const [notes, setNotes] = useState([])
+  const [newNote, setNewNote] = useState('')
+  const [showAll, setShowAll] = useState(true)
+
+  useEffect(() => {
+    console.log('effect')
+    axios
+      .get('http://localhost:3001/persons')
+      .then(response => {
+        console.log('promise fulfilled')
+        setNotes(response.data)
+      })
+  }, [])
+  console.log('render', notes.length, 'notes')
+  
   const [persons, setPersons] = useState([
     { name: 'Arto Hellas', number: '040-1234567' },
     { name: 'Ada Lovelace', number: '39-44-5323523' },
