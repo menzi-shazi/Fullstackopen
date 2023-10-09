@@ -18,6 +18,46 @@ const Filter = ({ filter }) => {
   )
 }
 
+const Notification = ({ message, notificationStyle }) => {
+  const successNotificationStyle = {
+    color: 'green',
+    background: 'lightgrey',
+    fontSize: 20,
+    borderStyle: 'solid',
+    borderRadius: 5,
+    padding: 10,
+    marginBottom: 10
+  }
+
+  const errorNotificationStyle = {
+    color: 'red',
+    background: 'lightgrey',
+    fontSize: 20,
+    borderStyle: 'solid',
+    borderRadius: 5,
+    padding: 10,
+    marginBottom: 10
+  }
+
+  if (message === null) {
+    return null
+  }
+
+  if (notificationStyle === 'success') {
+    return (
+      <div style={successNotificationStyle}>
+        {message}
+      </div>
+    )
+  } else if (notificationStyle === 'error') {
+    return (
+      <div style={errorNotificationStyle}>
+        {message}
+      </div>
+  )
+  }
+}
+
 const Form = ({ submitName, addName, addNumber, newName, newNumber }) => {
   return (
     <form onSubmit={submitName}>
@@ -38,6 +78,8 @@ const App = () => {
   const [persons, setPersons] = useState([]) 
   const [newName, setNewName] = useState('')
   const [newNumber, setNewNumber] = useState('')
+  const [notificationMessage, setnotificationMessage] = useState(null)
+  const [notificationStyle, setnotificationStyle] = useState(null)
 
   useEffect(() => {
     personService.getAll()
@@ -68,6 +110,12 @@ const App = () => {
         personService.updatePerson(nameExist.id, newPerson)
         .then(response => {
           setPersons(persons.map(person => person.id !== nameExist.id ? person : response.data))
+          setnotificationMessage(`Updated ${newName}`)
+          setnotificationStyle('success')
+        })
+        .catch(error => {
+          setnotificationMessage(`Information of ${newName} has already been removed from server`)
+          setnotificationStyle('error')
         })
       }
     } else { 
@@ -77,6 +125,8 @@ const App = () => {
       }
       personService.create(newPerson).then(response => {
         setPersons(persons.concat(response.data))
+        setnotificationMessage(`Added ${newName}`)
+        setnotificationStyle('success')
       })
     }
   }
@@ -86,6 +136,8 @@ const App = () => {
     if (confirmDelete) {
       personService.deletePerson(person.id)
       setPersons(persons.filter(p => p.id !== person.id))
+      setnotificationMessage(`Deleted ${person.name}`)
+      setnotificationStyle('success')
     }
   }
 
@@ -98,6 +150,7 @@ const App = () => {
   return (
     <div>
       <h2>Phonebook</h2>
+      <Notification message={notificationMessage} notificationStyle = {notificationStyle}/>
       <Filter filter={filter} />
       <h2>Add a new</h2>
       <Form submitName={submitName} addName={addName} addNumber={addNumber} newName={newName} newNumber={newNumber} />
