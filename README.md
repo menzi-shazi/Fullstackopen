@@ -11,7 +11,7 @@ This repository contains my solutions to the exercises from the FullStackOpen co
 
 FullStackOpen is a comprehensive course that provides hands-on experience with modern web development techniques. It covers a wide range of topics including:
 
-- JavaScript
+- JavaScript 
 - React
 - Redux
 - Node.js
